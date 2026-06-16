@@ -1,0 +1,49 @@
+[package]
+name = "rust-beyond-http"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ftp_server"
+path = "src/ftp_server/main.rs"
+
+[[bin]]
+name = "ftp_client"
+path = "src/ftp_client/main.rs"
+
+[[bin]]
+name = "socket_server"
+path = "src/socket/main.rs"
+
+[[bin]]
+name = "combined"
+path = "src/combined/main.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# FTP server
+libunftp = "0.20.0"
+unftp-sbe-fs = "0.2.0"
+unftp-sbe-restrict = { path = "/home/manan/Desktop/Manan/Work/infra-tikv-backup-maintainer/unftp-sbe-restrict-0.1.2" }
+
+# FTP client (v7 uses "tokio" feature instead of "async")
+suppaftp = { version = "6.1.1", features = ["async"] }
+
+# Socket.IO server (v0.18 requires axum 0.8)
+socketioxide = { version = "0.18", features = ["extensions", "state"] }
+axum = "0.8"
+tower = "0.4"
+tower-http = { version = "0.6", features = ["cors"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Utilities
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1"
+async-trait = "0.1"
+futures-lite = "2.6"

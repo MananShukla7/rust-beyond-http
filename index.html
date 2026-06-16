@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload Notifications</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { font-family: monospace; background: #0f1117; color: #e0e4f0; padding: 2rem; }
+    h2   { color: #7bb8ff; }
+    #log { border: 1px solid #2a2d3a; padding: 1rem; border-radius: 8px; min-height: 200px; }
+    .event { margin: 0.4rem 0; padding: 0.4rem 0.8rem; border-radius: 4px; }
+    .upload { background: #1a2a1a; border-left: 3px solid #64d79a; }
+    .connect { background: #1a1a2a; border-left: 3px solid #7bb8ff; }
+    .count  { background: #2a2a1a; border-left: 3px solid #ffc864; }
+  </style>
+</head>
+<body>
+  <h2>📡 File Upload Notifications</h2>
+  <p id="status">Connecting...</p>
+  <div id="log"></div>
+
+  <script>
+    const socket = io("http://localhost:3000");
+    const log    = document.getElementById("log");
+    const status = document.getElementById("status");
+
+    function addEvent(msg, cls) {
+      const div = document.createElement("div");
+      div.className = `event ${cls}`;
+      div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      log.prepend(div);
+    }
+
+    socket.on("connect", () => {
+      status.textContent = `Connected (id: ${socket.id})`;
+      addEvent("Connected to server", "connect");
+    });
+
+    socket.on("disconnect", () => {
+      status.textContent = "Disconnected";
+      addEvent("Disconnected from server", "connect");
+    });
+
+    socket.on("file_uploaded", (data) => {
+      addEvent(
+        `📁 ${data.filename} uploaded — ${data.size_bytes} bytes`,
+        "upload"
+      );
+    });
+
+    socket.on("client_count", (data) => {
+      addEvent(`👥 ${data.count} client(s) connected`, "count");
+    });
+
+    socket.on("joined", (data) => {
+      addEvent(`Joined room: ${data.room}`, "connect");
+    });
+  </script>
+</body>
+</html>
